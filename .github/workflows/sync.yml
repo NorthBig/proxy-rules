@@ -1,0 +1,80 @@
+name: Sync Grok Rules
+
+on:
+  schedule:
+    - cron: '0 2 * * *'   # 每天 UTC 02:00 自动同步
+  workflow_dispatch:        # 支持手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Grok.list
+        run: |
+          python3 << 'EOF'
+          import urllib.request
+
+          TWITTER_URL = (
+              "https://raw.githubusercontent.com/blackmatrix7/"
+              "ios_rule_script/master/rule/QuantumultX/Twitter/Twitter.list"
+          )
+
+          # xAI 独有域名（Twitter.list 里没有的）
+          GROK_EXTRA = [
+              "HOST-SUFFIX,grok.com",
+              "HOST-SUFFIX,x.ai",
+          ]
+
+          with urllib.request.urlopen(TWITTER_URL) as r:
+              twitter_lines = r.read().decode().splitlines()
+
+          seen = set()
+          output = [
+              "# Grok.list — Auto-generated, do not edit manually",
+              "# Source: blackmatrix7/Twitter + xAI domains",
+              "# Updated by GitHub Actions",
+              "",
+              "# xAI / Grok specific",
+          ]
+
+          for line in GROK_EXTRA:
+              key = line.upper()
+              if key not in seen:
+                  seen.add(key)
+                  output.append(line)
+
+          output += ["", "# Twitter / X (blackmatrix7)"]
+
+          def strip_policy(line):
+              parts = line.split(",")
+              return ",".join(parts[:2]) if len(parts) >= 3 else line
+
+          for line in twitter_lines:
+              stripped = line.strip()
+              if not stripped or stripped.startswith("#"):
+                  continue
+              line = strip_policy(stripped)
+              key = line.upper()
+              if key not in seen:
+                  seen.add(key)
+                  output.append(line)
+
+          with open("Grok.list", "w") as f:
+              f.write("\n".join(output) + "\n")
+
+          print(f"Total rules: {len(seen)}")
+          EOF
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Grok.list
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: sync Grok rules $(date -u +%Y-%m-%d)"
+            git push
+          fi
