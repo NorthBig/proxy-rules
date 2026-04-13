@@ -1,4 +1,4 @@
-name: Sync Grok Rules
+name: Sync Proxy Rules
 
 on:
   schedule:
@@ -11,96 +11,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build Grok.list and Grok.yaml
-        run: |
-          python3 << 'EOF'
-          import urllib.request
-
-          TWITTER_URL = (
-              "https://raw.githubusercontent.com/blackmatrix7/"
-              "ios_rule_script/master/rule/QuantumultX/Twitter/Twitter.list"
-          )
-
-          GROK_EXTRA_QX = [
-              "HOST-SUFFIX,grok.com",
-              "HOST-SUFFIX,x.ai",
-          ]
-
-          def qx_to_clash(line):
-              if line.startswith("HOST-SUFFIX,"):
-                  return "DOMAIN-SUFFIX," + line[len("HOST-SUFFIX,"):]
-              if line.startswith("HOST,"):
-                  return "DOMAIN," + line[len("HOST,"):]
-              if line.startswith("HOST-KEYWORD,"):
-                  return "DOMAIN-KEYWORD," + line[len("HOST-KEYWORD,"):]
-              if line.startswith("IP-CIDR,") or line.startswith("IP-CIDR6,"):
-                  return line + ",no-resolve"
-              return line
-
-          def strip_policy(line):
-              parts = line.split(",")
-              return ",".join(parts[:2]) if len(parts) >= 3 else line
-
-          with urllib.request.urlopen(TWITTER_URL) as r:
-              twitter_lines = r.read().decode().splitlines()
-
-          seen_qx = set()
-          qx_output = [
-              "# Grok.list — Auto-generated, do not edit manually",
-              "# Source: blackmatrix7/Twitter + xAI domains",
-              "# Updated by GitHub Actions",
-              "",
-              "# xAI / Grok specific",
-          ]
-
-          for line in GROK_EXTRA_QX:
-              key = line.upper()
-              if key not in seen_qx:
-                  seen_qx.add(key)
-                  qx_output.append(line)
-
-          qx_output += ["", "# Twitter / X (blackmatrix7)"]
-
-          for raw_line in twitter_lines:
-              stripped = raw_line.strip()
-              if not stripped or stripped.startswith("#"):
-                  continue
-              line = strip_policy(stripped)
-              key = line.upper()
-              if key not in seen_qx:
-                  seen_qx.add(key)
-                  qx_output.append(line)
-
-          with open("Grok.list", "w") as f:
-              f.write("\n".join(qx_output) + "\n")
-
-          clash_rules = []
-          for qx_line in qx_output:
-              if not qx_line or qx_line.startswith("#"):
-                  continue
-              clash_rules.append("  - " + qx_to_clash(qx_line))
-
-          clash_output = [
-              "# Grok.yaml — Auto-generated, do not edit manually",
-              "# Source: blackmatrix7/Twitter + xAI domains",
-              "# Updated by GitHub Actions",
-              "payload:",
-          ] + clash_rules
-
-          with open("Grok.yaml", "w") as f:
-              f.write("\n".join(clash_output) + "\n")
-
-          print(f"Done. QX rules: {len(seen_qx)}, Clash rules: {len(clash_rules)}")
-          EOF
+      - name: Build all rule files
+        run: python3 build.py
 
       - name: Commit if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add Grok.list Grok.yaml
+          git add Grok.list Grok.yaml OpenAI.yaml
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "chore: sync Grok rules $(date -u +%Y-%m-%d)"
+            git commit -m "chore: sync rules $(date -u +%Y-%m-%d)"
             git push
           fi
