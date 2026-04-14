@@ -4,6 +4,7 @@
 同时生成：
   Grok.list  / Grok.yaml   — blackmatrix7/Twitter QX 列表 + xAI 独有域名
   OpenAI.yaml              — blackmatrix7/OpenAI Clash 列表，去除 IP-ASN 行
+  Anthropic.list / Anthropic.yaml — blackmatrix7/Claude QX 列表 + claude.com
 """
 import urllib.request
 
@@ -16,11 +17,20 @@ OPENAI_CLASH_URL = (
     "https://raw.githubusercontent.com/blackmatrix7/"
     "ios_rule_script/master/rule/Clash/OpenAI/OpenAI.yaml"
 )
+CLAUDE_QX_URL = (
+    "https://raw.githubusercontent.com/blackmatrix7/"
+    "ios_rule_script/master/rule/QuantumultX/Claude/Claude.list"
+)
 
 # ── xAI 独有域名（Twitter.list 里没有的）─────────────────────────────────────
 GROK_EXTRA_QX = [
     "HOST-SUFFIX,grok.com",
     "HOST-SUFFIX,x.ai",
+]
+
+# ── Anthropic 独有域名（blackmatrix7/Claude.list 里缺失的）───────────────────
+ANTHROPIC_EXTRA_QX = [
+    "HOST-SUFFIX,claude.com",
 ]
 
 # ── 工具函数 ──────────────────────────────────────────────────────────────────
@@ -133,7 +143,60 @@ def build_openai():
 
     print(f"OpenAI — kept: {kept} rules, removed IP-ASN: {skipped}")
 
+# ── 生成 Anthropic.list（QX）和 Anthropic.yaml（Clash）──────────────────────
+def build_anthropic():
+    claude_lines = fetch(CLAUDE_QX_URL)
+
+    seen = set()
+    qx_output = [
+        "# Anthropic.list — Auto-generated, do not edit manually",
+        "# Source: blackmatrix7/Claude + claude.com",
+        "# Updated by GitHub Actions",
+        "",
+        "# Anthropic extra domains (not in blackmatrix7/Claude.list)",
+    ]
+
+    for line in ANTHROPIC_EXTRA_QX:
+        key = line.upper()
+        if key not in seen:
+            seen.add(key)
+            qx_output.append(line)
+
+    qx_output += ["", "# Anthropic / Claude (blackmatrix7)"]
+
+    for raw in claude_lines:
+        stripped = raw.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        line = strip_policy(stripped)
+        key = line.upper()
+        if key not in seen:
+            seen.add(key)
+            qx_output.append(line)
+
+    with open("Anthropic.list", "w") as f:
+        f.write("\n".join(qx_output) + "\n")
+
+    clash_rules = [
+        "  - " + qx_to_clash(l)
+        for l in qx_output
+        if l and not l.startswith("#")
+    ]
+    clash_output = [
+        "# Anthropic.yaml — Auto-generated, do not edit manually",
+        "# Source: blackmatrix7/Claude + claude.com",
+        "# Updated by GitHub Actions",
+        "payload:",
+    ] + clash_rules
+
+    with open("Anthropic.yaml", "w") as f:
+        f.write("\n".join(clash_output) + "\n")
+
+    print(f"Anthropic — QX: {len(seen)} rules, Clash: {len(clash_rules)} rules")
+
+
 # ── 主入口 ────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     build_grok()
     build_openai()
+    build_anthropic()
