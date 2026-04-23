@@ -1,0 +1,33 @@
+# Autodesk.yaml — Fusion 360 and Autodesk services
+# Source: Autodesk Fusion network requirements + practical CDN/auth dependencies
+payload:
+  - DOMAIN-SUFFIX,autodesk.com
+  - DOMAIN-SUFFIX,autodesk360.com
+  - DOMAIN-SUFFIX,autodesk.com.cn
+  - DOMAIN-SUFFIX,akamai.com
+  - DOMAIN-SUFFIX,akamaitechnologies.com
+  - DOMAIN-SUFFIX,amazonaws.com
+  - DOMAIN-SUFFIX,cloudfront.net
+  - DOMAIN-SUFFIX,s3.amazonaws.com
+  - DOMAIN-SUFFIX,s3-accelerate.amazonaws.com
+  - DOMAIN-SUFFIX,damassets.net
+  - DOMAIN-SUFFIX,launchdarkly.com
+  - DOMAIN-SUFFIX,library.io
+  - DOMAIN-SUFFIX,pndsn.com
+  - DOMAIN-SUFFIX,pubnub.com
+  - DOMAIN-SUFFIX,mcmaster.com
+  - DOMAIN-SUFFIX,tracepartsonline.net
+  - DOMAIN,accounts.autodesk.com
+  - DOMAIN,api.autodesk.com
+  - DOMAIN-SUFFIX,api.autodesk.com
+  - DOMAIN,appstreaming.autodesk.com
+  - DOMAIN-SUFFIX,appstreaming.autodesk.com
+  - DOMAIN,fusionapi.autodesk.com
+  - DOMAIN,idp.auth.autodesk.com
+  - DOMAIN,notifications.api.autodesk.com
+  - DOMAIN,signin.autodesk.com
+  - DOMAIN,ui-dls360.autodesk.com
+  - DOMAIN,api.hcaptcha.com
+  - DOMAIN-SUFFIX,google-analytics.com
+  - DOMAIN-SUFFIX,googletagmanager.com
+  - DOMAIN-SUFFIX,requirejs.org
