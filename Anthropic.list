@@ -1,11 +1,5 @@
-# Anthropic.list — Auto-generated, do not edit manually
-# Source: blackmatrix7/Claude + claude.com
-# Updated by GitHub Actions
-
-# Anthropic extra domains (not in blackmatrix7/Claude.list)
 HOST-SUFFIX,claude.com
-
-# Anthropic / Claude (blackmatrix7)
+HOST-SUFFIX,claudeusercontent.com
 HOST,cdn.usefathom.com
 HOST-SUFFIX,anthropic.com
 HOST-SUFFIX,claude.ai

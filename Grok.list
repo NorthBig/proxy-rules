@@ -1,12 +1,5 @@
-# Grok.list — Auto-generated, do not edit manually
-# Source: blackmatrix7/Twitter + xAI domains
-# Updated by GitHub Actions
-
-# xAI / Grok specific
 HOST-SUFFIX,grok.com
 HOST-SUFFIX,x.ai
-
-# Twitter / X (blackmatrix7)
 HOST-SUFFIX,ads-twitter.com
 HOST-SUFFIX,cms-twdigitalassets.com
 HOST-SUFFIX,periscope.tv

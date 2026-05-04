@@ -31,6 +31,7 @@ GROK_EXTRA_QX = [
 # ── Anthropic 独有域名（blackmatrix7/Claude.list 里缺失的）───────────────────
 ANTHROPIC_EXTRA_QX = [
     "HOST-SUFFIX,claude.com",
+    "HOST-SUFFIX,claudeusercontent.com",
 ]
 
 # ── 工具函数 ──────────────────────────────────────────────────────────────────
@@ -60,21 +61,13 @@ def build_grok():
     twitter_lines = fetch(TWITTER_QX_URL)
 
     seen = set()
-    qx_output = [
-        "# Grok.list — Auto-generated, do not edit manually",
-        "# Source: blackmatrix7/Twitter + xAI domains",
-        "# Updated by GitHub Actions",
-        "",
-        "# xAI / Grok specific",
-    ]
+    qx_output = []
 
     for line in GROK_EXTRA_QX:
         key = line.upper()
         if key not in seen:
             seen.add(key)
             qx_output.append(line)
-
-    qx_output += ["", "# Twitter / X (blackmatrix7)"]
 
     for raw in twitter_lines:
         stripped = raw.strip()
@@ -148,21 +141,13 @@ def build_anthropic():
     claude_lines = fetch(CLAUDE_QX_URL)
 
     seen = set()
-    qx_output = [
-        "# Anthropic.list — Auto-generated, do not edit manually",
-        "# Source: blackmatrix7/Claude + claude.com",
-        "# Updated by GitHub Actions",
-        "",
-        "# Anthropic extra domains (not in blackmatrix7/Claude.list)",
-    ]
+    qx_output = []
 
     for line in ANTHROPIC_EXTRA_QX:
         key = line.upper()
         if key not in seen:
             seen.add(key)
             qx_output.append(line)
-
-    qx_output += ["", "# Anthropic / Claude (blackmatrix7)"]
 
     for raw in claude_lines:
         stripped = raw.strip()
