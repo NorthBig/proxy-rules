@@ -4,7 +4,7 @@
 同时生成：
   Grok.list  / Grok.yaml   — blackmatrix7/Twitter QX 列表 + xAI 独有域名
   OpenAI.yaml              — blackmatrix7/OpenAI Clash 列表，去除 IP-ASN 行
-  Anthropic.list / Anthropic.yaml — blackmatrix7/Claude QX 列表 + claude.com
+  Anthropic.list / Anthropic.yaml — blackmatrix7/Claude + Claude host supplements
 """
 import urllib.request
 
@@ -31,7 +31,9 @@ GROK_EXTRA_QX = [
 # ── Anthropic 独有域名（blackmatrix7/Claude.list 里缺失的）───────────────────
 ANTHROPIC_EXTRA_QX = [
     "HOST-SUFFIX,claude.com",
+    "HOST-SUFFIX,claude.app",
     "HOST-SUFFIX,claudeusercontent.com",
+    "HOST-SUFFIX,claudemcpcontent.com",
 ]
 
 # ── 工具函数 ──────────────────────────────────────────────────────────────────
@@ -169,7 +171,7 @@ def build_anthropic():
     ]
     clash_output = [
         "# Anthropic.yaml — Auto-generated, do not edit manually",
-        "# Source: blackmatrix7/Claude + claude.com",
+        "# Source: blackmatrix7/Claude + Claude host supplements",
         "# Updated by GitHub Actions",
         "payload:",
     ] + clash_rules

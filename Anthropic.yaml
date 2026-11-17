@@ -1,9 +1,11 @@
 # Anthropic.yaml — Auto-generated, do not edit manually
-# Source: blackmatrix7/Claude + claude.com
+# Source: blackmatrix7/Claude + Claude host supplements
 # Updated by GitHub Actions
 payload:
   - DOMAIN-SUFFIX,claude.com
+  - DOMAIN-SUFFIX,claude.app
   - DOMAIN-SUFFIX,claudeusercontent.com
+  - DOMAIN-SUFFIX,claudemcpcontent.com
   - DOMAIN,cdn.usefathom.com
   - DOMAIN-SUFFIX,anthropic.com
   - DOMAIN-SUFFIX,claude.ai
